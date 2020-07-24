@@ -1,3 +1,68 @@
+<?php
+
+  // SDK Mercado Pago
+  require_once 'vendor/autoload.php';
+  
+  // Definir credenciales
+  MercadoPago\SDK::setAccessToken("APP_USR-6317427424180639-042414-47e969706991d3a442922b0702a0da44-469485398");
+  
+  // Integrador
+  MercadoPago\SDK::setIntegratorId("dev_24c65fb163bf11ea96500242ac130004");
+  
+  // Crear objeto Preference
+  $preference = new MercadoPago\Preference();
+  
+  // Datos adicionales
+  $preference->external_reference = "jsuarez@mydesign.com.ar";
+  $preference->notification_url = "https://jsuarez-mp-commerce-php.herokuapp.com/";
+  
+  // Páginas de retorno
+  $preference->back_urls = array(
+      "success" => "https://".$_SERVER['HTTP_HOST']."/pago-success.php",
+      "failure" => "https://".$_SERVER['HTTP_HOST']."/pago-failure.php",
+      "pending" => "https://".$_SERVER['HTTP_HOST']."/pago-pending.php"
+  );
+  $preference->auto_return = "approved";
+  
+  // Datos comprador
+  $payer = new MercadoPago\Payer();
+  $payer->name = "Lalo";
+  $payer->surname = "Lando";
+  $payer->email = "test_user_63274575@testuser.com";
+  $payer->phone = array(
+      "area_code" => "11",
+      "number" => "22223333"
+  );
+  $payer->address = array(
+      "street_name" => "False",
+      "street_number" => 123,
+      "zip_code" => "1111"
+  );
+  
+  // Crear item en Preference
+  $item = new MercadoPago\Item();
+  $item->id = '1234';
+  $item->title = $_POST['title'];
+  $item->description = '​Dispositivo móvil de Tienda e-commerce';
+  $item->picture_url = 'https://'.$_SERVER['HTTP_HOST'].'/'.$_POST['img'];
+  $item->quantity = 1;
+  $item->unit_price = $_POST['price'];
+  $preference->items = array($item);
+  
+  // Métodos de pago
+  $preference->payment_methods = array(
+      "excluded_payment_methods" => array(
+          array("id" => "amex")
+      ),
+      "excluded_payment_types" => array(
+          array("id" => "atm")
+      ),
+      "installments" => 6
+  );
+  
+  // Salvar
+  $preference->save();
+?>
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -42,6 +107,8 @@
 
 
 <body class="as-theme-light-heroimage">
+  
+  <script src="https://www.mercadopago.com/v2/security.js" view="item"></script>
 
     <div class="stack">
         
@@ -52,7 +119,7 @@
                         <div class="pd-billboard pd-category-header">
                             <div class="pd-l-plate-scale">
                                 <div class="pd-billboard-background">
-                                    <img src="./assets/music-audio-alp-201709" alt="" width="1440" height="320" data-scale-params-2="wid=2880&amp;hei=640&amp;fmt=jpeg&amp;qlt=95&amp;op_usm=0.5,0.5&amp;.v=1503948581306" class="pd-billboard-hero ir">
+                                    <img src="assets/music-audio-alp-201709" alt="" width="1440" height="320" data-scale-params-2="wid=2880&amp;hei=640&amp;fmt=jpeg&amp;qlt=95&amp;op_usm=0.5,0.5&amp;.v=1503948581306" class="pd-billboard-hero ir">
                                 </div>
                                 <div class="pd-billboard-info">
                                     <h1 class="pd-billboard-header pd-util-compact-small-18">Tienda e-commerce</h1>
@@ -91,7 +158,7 @@
                                 <div class="as-producttile-tilehero with-paddlenav " style="float:left;">
                                     <div class="as-dummy-container as-dummy-img">
 
-                                        <img src="./assets/wireless-headphones" class="ir ir item-image as-producttile-image  " style="max-width: 70%;max-height: 70%;"alt="" width="445" height="445">
+                                        <img src="assets/wireless-headphones" class="ir ir item-image as-producttile-image  " style="max-width: 70%;max-height: 70%;"alt="" width="445" height="445">
                                     </div>
                                     <div class="images mini-gallery gal5 ">
                                     
@@ -100,7 +167,7 @@
                                             <div class="clearfix image-list xs-no-js as-util-relatedlink relatedlink" data-relatedlink="6|Powerbeats3 Wireless Earphones - Neighborhood Collection - Brick Red|MPXP2">
                                                 <div class="as-tilegallery-element as-image-selected">
                                                     <div class=""></div>
-                                                    <img src="./assets/003.jpg" class="ir ir item-image as-producttile-image" alt="" width="445" height="445" style="content:-webkit-image-set(url(<?php echo $_POST['img'] ?>) 2x);">
+                                                    <img src="assets/003.jpg" class="ir ir item-image as-producttile-image" alt="" width="445" height="445" style="content:-webkit-image-set(url(<?php echo $_POST['img'] ?>) 2x);">
                                                 </div>
                                                 
                                             </div>
@@ -130,7 +197,10 @@
                                             <?php echo "$" . $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+                                    <form action="procesar-pago.php" method="get">
+                                        <script src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js" data-preference-id="<?php echo $preference->id; ?>" data-button-label="Pagar la compra"></script>
+                                    </form>
+                                    
                                 </div>
                             </div>
                         </div>
