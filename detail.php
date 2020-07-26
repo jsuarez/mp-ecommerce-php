@@ -14,7 +14,7 @@
   
   // Datos adicionales
   $preference->external_reference = "jsuarez@mydesign.com.ar";
-  $preference->notification_url = "https://jsuarez-mp-commerce-php.herokuapp.com/";
+  $preference->notification_url = "https://jsuarez-mp-commerce-php.herokuapp.com/notificacion-mp.php";
   
   // Páginas de retorno
   $preference->back_urls = array(
