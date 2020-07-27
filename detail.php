@@ -43,7 +43,7 @@
   $item = new MercadoPago\Item();
   $item->id = '1234';
   $item->title = $_POST['title'];
-  $item->description = '​Dispositivo móvil de Tienda e-commerce';
+  $item->description = 'Dispositivo móvil de Tienda e-commerce';
   $item->picture_url = 'https://'.$_SERVER['HTTP_HOST'].'/'.$_POST['img'];
   $item->quantity = 1;
   $item->unit_price = $_POST['price'];
@@ -59,6 +59,8 @@
       ),
       "installments" => 6
   );
+
+  $preference->payer = $payer;
   
   // Salvar
   $preference->save();
