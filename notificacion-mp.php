@@ -42,7 +42,7 @@ if (isset($_GET['idmp'])) {
     }
     if (($fd = fopen('notificaciones.txt', 'a+'))) {
       fwrite($fd, date('H:i') . "\n");
-      fwrite($fd, $_GET['topic'] . ': ' . objectToJSON($data)."\n");
+      fwrite($fd, $_GET['topic'] . ': ' . str_replace('\/', '/', objectToJSON($data))."\n");
       fclose($fd);
     }
   }
