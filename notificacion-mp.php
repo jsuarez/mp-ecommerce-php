@@ -24,8 +24,8 @@ if (isset($_GET['idmp'])) {
   echo objectToJSON($payment);
 } else {
   http_response_code(404);
-  if (($fd = fopen('notificaciones-mp.log', 'a+'))) {
-    fwrite($fd, date('Ymd H:i') . "\n");
+  if (($fd = fopen('notificaciones.txt', 'a+'))) {
+    fwrite($fd, date('H:i') . "\n");
     fwrite($fd, 'GET: ' . json_encode($_GET) . "\n");
     fwrite($fd, 'POST: ' . json_encode($_POST) . "\n");
     fwrite($fd, 'REQUEST: ' . json_encode($_REQUEST) . "\n\n");
@@ -40,8 +40,8 @@ if (isset($_GET['idmp'])) {
     } else {
       return;
     }
-    if (($fd = fopen('notificaciones-' . $_GET['id'] . '.log', 'a+'))) {
-      fwrite($fd, date('Ymd H:i') . "\n");
+    if (($fd = fopen('notificaciones.txt', 'a+'))) {
+      fwrite($fd, date('H:i') . "\n");
       fwrite($fd, $_GET['topic'] . ': ' . objectToJSON($data));
       fclose($fd);
     }
