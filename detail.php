@@ -14,7 +14,7 @@
   
   // Datos adicionales
   $preference->external_reference = "jsuarez@mydesign.com.ar";
-  $preference->notification_url = "https://jsuarez-mp-commerce-php.herokuapp.com/";
+  $preference->notification_url = "https://jsuarez-mp-commerce-php.herokuapp.com/notificacion-mp.php";
   
   // Páginas de retorno
   $preference->back_urls = array(
@@ -62,47 +62,6 @@
   
   // Salvar
   $preference->save();
-
-  function objectToArray ($object) {
-    if(!is_object($object) && !is_array($object)) {
-      return $object;
-    }
-    return array_map('objectToArray', (array) $object);
-  }
-
-  function objectToJSON ($object) {
-    return str_replace('\u0000*\u0000', '', json_encode(objectToArray($object)));
-  }
-
-  if (isset($_GET['idmp'])) {
-    ini_set('display_errors', 'on');
-    error_reporting(E_ALL);
-    $payment = MercadoPago\Payment::find_by_id($_GET["idmp"]);
-    echo objectToJSON($payment);
-  } else {
-    http_response_code(404);
-    if (($fd = fopen('notificaciones-mp.log', 'a+'))) {
-      fwrite($fd, date('Ymd H:i') . "\n");
-      fwrite($fd, 'GET: ' . json_encode($_GET) . "\n");
-      fwrite($fd, 'POST: ' . json_encode($_POST) . "\n");
-      fwrite($fd, 'REQUEST: ' . json_encode($_REQUEST) . "\n\n");
-      fclose($fd);
-      http_response_code(200);
-    }
-    if (isset($_GET['topic'])/* && isset($_GET['id']) && $_GET['topic'] == 'payment' && is_numeric($_GET['id'])*/) {
-      $body = @file_get_contents('php://input');
-      $data = json_decode($body);
-      $payment = MercadoPago\Payment::find_by_id($data->data->id);
-      //$payment = MercadoPago\Payment::find_by_id($_GET["id"]);
-      if (($fd = fopen('notificaciones-' . $_GET['id'] . '.log', 'a+'))) {
-        fwrite($fd, date('Ymd H:i') . "\n");
-        fwrite($fd, objectToJSON($payment));
-        fclose($fd);
-      }
-    }
-  }
-
-
 ?>
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
